@@ -236,6 +236,198 @@
     color: var(--muted);
   }
 
+  /* MOBILE RESPONSIVE */
+  @media (max-width: 768px) {
+    .page {
+      padding: 24px 16px 32px;
+    }
+
+    .header {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: start;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+
+    .header-left h1 {
+      font-size: 28px;
+      letter-spacing: -0.3px;
+    }
+
+    .header-left .title {
+      font-size: 11px;
+    }
+
+    .header-right {
+      text-align: left;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .summary {
+      padding: 11px 14px;
+      font-size: 12px;
+      margin-bottom: 24px;
+      border-left-width: 2px;
+    }
+
+    .body-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+    }
+
+    .entry {
+      margin-bottom: 14px;
+    }
+
+    .entry-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .entry-title {
+      font-size: 13px;
+    }
+
+    .entry-date {
+      font-size: 10px;
+      white-space: normal;
+    }
+
+    .entry-sub {
+      font-size: 11.5px;
+      margin-bottom: 3px;
+    }
+
+    .entry ul {
+      padding-left: 14px;
+      margin-top: 2px;
+    }
+
+    .entry ul li {
+      font-size: 12px;
+      margin-bottom: 1px;
+    }
+
+    .project-card {
+      padding: 11px 12px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+
+    .proj-top {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .proj-name {
+      font-size: 12.5px;
+    }
+
+    .proj-link {
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+
+    .proj-desc {
+      font-size: 12px;
+      margin-bottom: 7px;
+      line-height: 1.5;
+    }
+
+    .tags {
+      gap: 3px;
+    }
+
+    .tag {
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+
+    .skill-group {
+      margin-bottom: 9px;
+    }
+
+    .skill-group-label {
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+
+    .skill-pills {
+      gap: 3px;
+    }
+
+    .skill-pill {
+      font-size: 10.5px;
+      padding: 2px 7px;
+    }
+
+    .edu-item {
+      margin-bottom: 10px;
+    }
+
+    .edu-title {
+      font-size: 12px;
+    }
+
+    .edu-sub {
+      font-size: 11px;
+    }
+
+    .edu-date {
+      font-size: 10px;
+    }
+
+    .lang-item {
+      margin-bottom: 6px;
+    }
+
+    .lang-name {
+      font-size: 12px;
+    }
+
+    .lang-badge {
+      font-size: 10px;
+      padding: 1px 6px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .page {
+      padding: 16px 12px 24px;
+    }
+
+    .header-left h1 {
+      font-size: 24px;
+    }
+
+    body {
+      font-size: 12px;
+    }
+
+    .entry-header {
+      gap: 2px;
+    }
+
+    .proj-top {
+      gap: 6px;
+    }
+  }
+
   @media print {
     body { font-size: 12px; }
     .page { padding: 30px 34px; }
@@ -256,7 +448,7 @@
       <div>+20 100 780 9902</div>
       <div>Alexandria, Egypt</div>
       <div><a href="https://github.com/mostafaBahaa97">github.com/mostafaBahaa97</a></div>
-      <div><a href="https://linkedin.com/in/mostafabahaa899">linkedin.com/in/mostafabahaa899</a></div>
+      <div><a href="https://www.linkedin.com/in/mostafabahaaeldin-dev/">linkedin.com/in/mostafabahaaeldin-dev/</a></div>
       <div><a href="https://mostafa-s-portfolio.vercel.app/">mostafa-s-portfolio.vercel.app</a></div>
     </div>
   </header>
@@ -300,7 +492,7 @@
         <div class="project-card">
           <div class="proj-top">
             <span class="proj-name">Movie Discovery App</span>
-            <a class="proj-link" href="#" target="_blank">↗ Live</a>
+            <a class="proj-link" href="https://movie-app-reactjs-beige.vercel.app/" target="_blank">↗ Live</a>
           </div>
           <p class="proj-desc">
             Browse and search movies via TMDB API with session-based authentication,
@@ -317,7 +509,7 @@
         <div class="project-card">
           <div class="proj-top">
             <span class="proj-name">E-Commerce Store</span>
-            <a class="proj-link" href="#" target="_blank">↗ Live</a>
+            <a class="proj-link" href="https://mostafabahaa97.github.io/E-Commerce-Shop/" target="_blank">↗ Live</a>
           </div>
           <p class="proj-desc">
             Product catalog with cart, checkout flow, and session authentication. Fully responsive.
@@ -388,7 +580,7 @@
             <span class="skill-pill">Next.js</span>
             <span class="skill-pill">JavaScript ES6+</span>
             <span class="skill-pill">HTML5 / CSS3</span>
-            <span class="skill-pill">Bootstrap</span>
+            <span class="skill-pill">Tailwind css</span>
           </div>
         </div>
 
