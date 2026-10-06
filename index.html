@@ -71,8 +71,13 @@
     line-height: 1.7;
   }
 
-  /* TWO-COLUMN */
-  .body-grid { display: grid; grid-template-columns: 1fr 210px; gap: 38px; }
+  /* TWO-COLUMN
+     DOM order: sidebar, main (page 1 content), page-2 (page 2 content).
+     On screen the sidebar sits on the right and spans both rows, so the website looks the same as before. */
+  .body-grid { display: grid; grid-template-columns: 1fr 210px; column-gap: 38px; row-gap: 0; }
+  .body-grid > .sidebar { grid-column: 2; grid-row: 1 / span 2; }
+  .body-grid > main     { grid-column: 1; grid-row: 1; }
+  .body-grid > .page-2  { grid-column: 1; grid-row: 2; }
 
   /* SECTION */
   .section { margin-bottom: 28px; }
@@ -185,7 +190,9 @@
     .header-left .title { font-size: 11px; }
     .header-right { text-align: left; font-size: 11px; line-height: 1.6; }
     .summary { padding: 11px 14px; font-size: 12px; margin-bottom: 24px; border-left-width: 2px; }
-    .body-grid { grid-template-columns: 1fr; gap: 24px; }
+    .body-grid { grid-template-columns: 1fr; }
+    .body-grid > .sidebar, .body-grid > main, .body-grid > .page-2 { grid-column: 1; grid-row: auto; }
+    .body-grid > .sidebar { order: 3; margin-top: 24px; }
     .section { margin-bottom: 20px; }
     .section-title { font-size: 10px; margin-bottom: 12px; padding-bottom: 4px; }
     .entry { margin-bottom: 14px; }
@@ -224,10 +231,64 @@
     .proj-top { gap: 6px; }
   }
 
+  /* ───────────── PRINT: A4, 2 pages (front + back of one sheet) ─────────────
+     Everything below affects printing only. The on-screen website is untouched.
+     Page 1 = header + summary + featured projects, with the sidebar (skills / education / languages) beside them.
+     Page 2 = .page-2 (more projects + experience) at FULL page width: the sidebar is floated on page 1
+     only, and .page-2 clears it and starts on a new page, so nothing is left blank on the right. */
+  @page { size: A4; margin: 11mm 12mm; }
+
   @media print {
-    body { font-size: 12px; }
-    .page { padding: 30px 34px; }
-    .project-card, .entry { break-inside: avoid; }
+    html, body { background: #fff; }
+    body { font-size: 11.5px; line-height: 1.45; }
+    .page { max-width: none; margin: 0; padding: 0; }
+
+    .header { gap: 18px; padding-bottom: 11px; margin-bottom: 13px; border-bottom-width: 1.5px; }
+    .header-left h1 { font-size: 31px; margin-bottom: 3px; }
+    .header-left .title { font-size: 11.5px; }
+    .header-right { font-size: 10.5px; line-height: 1.55; }
+
+    .summary { padding: 9px 14px; font-size: 11.5px; line-height: 1.55; margin-bottom: 15px; }
+
+    .body-grid { display: block; }
+    .body-grid > .sidebar { float: right; width: 182px; margin: 0 0 0 24px; }
+    .body-grid > main { display: flow-root; }
+    .body-grid > .page-2 { clear: both; break-before: page; page-break-before: always; }
+    .section { margin-bottom: 14px; }
+    .section-title { font-size: 9.5px; padding-bottom: 3px; margin-bottom: 9px; }
+
+    .entry { margin-bottom: 11px; }
+    .entry-title { font-size: 12.5px; }
+    .entry-date { font-size: 10px; }
+    .entry-sub { font-size: 11.5px; margin-bottom: 3px; }
+    .entry ul { padding-left: 15px; margin-top: 2px; }
+    .entry ul li { font-size: 11.5px; margin-bottom: 2px; }
+
+    .project-card, .project-card.compact { padding: 10px 13px; margin-bottom: 10px; border-radius: 7px; }
+    .proj-top { gap: 8px; margin-bottom: 1px; }
+    .proj-name { font-size: 12.5px; }
+    .proj-meta { font-size: 9.5px; margin-bottom: 4px; }
+    .proj-link { font-size: 9.5px; padding: 1px 7px; }
+    .proj-desc, .project-card.compact .proj-desc { font-size: 11.5px; line-height: 1.45; margin-bottom: 4px; }
+    .proj-points { padding-left: 15px; margin-bottom: 5px; }
+    .proj-points li { font-size: 11.5px; line-height: 1.42; margin-bottom: 1.5px; }
+    .tags { gap: 3px; }
+    .tag { font-size: 9px; padding: 1.5px 6px; }
+
+    .skill-group { margin-bottom: 9px; }
+    .skill-group-label { font-size: 9.5px; margin-bottom: 4px; }
+    .skill-pills { gap: 3px; }
+    .skill-pill { font-size: 10.5px; padding: 1px 7px; }
+    .edu-item { margin-bottom: 9px; }
+    .edu-title { font-size: 11.5px; }
+    .edu-sub { font-size: 10.5px; line-height: 1.35; }
+    .edu-date { font-size: 10px; }
+    .lang-item { margin-bottom: 5px; }
+    .lang-name { font-size: 11.5px; }
+    .lang-badge { font-size: 9.5px; padding: 0 6px; }
+
+    .project-card, .entry, .edu-item { break-inside: avoid; }
+    .section-title { break-after: avoid; }
   }
 </style>
 </head>
@@ -259,179 +320,6 @@
   </div>
 
   <div class="body-grid">
-    <main>
-
-      <!-- FEATURED PROJECTS -->
-      <section class="section">
-        <div class="section-title">Featured Projects</div>
-
-        <div class="project-card">
-          <div class="proj-top">
-            <span class="proj-name">Hazem El-Rayan — Parliamentary Services Portal</span>
-            <a class="proj-link" href="https://hazem-elrayan.com/" target="_blank">↗ hazem-elrayan.com</a>
-          </div>
-          <div class="proj-meta">Client work · Built solo, end to end · In production</div>
-          <p class="proj-desc">
-            Civic portal for an Egyptian Parliament member. Citizens submit service requests, file
-            complaints and track case status in real time.
-          </p>
-          <ul class="proj-points">
-            <li>Full admin dashboard for case management and a public news feed</li>
-            <li>Arabic-first RTL interface; Django REST API with PostgreSQL behind a Next.js front end</li>
-          </ul>
-          <div class="tags">
-            <span class="tag">Next.js</span>
-            <span class="tag">Django</span>
-            <span class="tag">PostgreSQL</span>
-            <span class="tag">REST API</span>
-            <span class="tag">RTL / Arabic</span>
-            <span class="tag">Admin Dashboard</span>
-          </div>
-        </div>
-
-       
-
-        <div class="project-card">
-          <div class="proj-top">
-            <span class="proj-name">ERP System — Arabic Business Management (PWA)</span>
-            <a class="proj-link" href="https://demo-erp-lilac.vercel.app/" target="_blank">↗ Live</a>
-          </div>
-          <div class="proj-meta">Client work · Built solo · Installable, works offline</div>
-          <p class="proj-desc">
-            Replaces paper notebooks and spreadsheets for small trading businesses: suppliers, customers,
-            products, purchases, sales, stock and invoices in one RTL Arabic app.
-          </p>
-          <ul class="proj-points">
-            <li>Live dashboard: purchases, sales, actual profit (average cost) and low-stock alerts</li>
-            <li>Printable sales and purchase invoices; supplier, customer and product account statements</li>
-            <li>Offline-safe writes: local sync queue with unique request IDs, so nothing is lost or duplicated</li>
-          </ul>
-          <div class="tags">
-            <span class="tag">Next.js 14</span>
-            <span class="tag">TypeScript</span>
-            <span class="tag">PWA</span>
-            <span class="tag">Tailwind CSS</span>
-            <span class="tag">Google Apps Script</span>
-          </div>
-        </div>
-
-        <div class="project-card compact">
-          <div class="proj-top">
-            <span class="proj-name">Alexander Restaurant Menu</span>
-            <a class="proj-link" href="https://alexander-menu-silk.vercel.app/" target="_blank">↗ Live</a>
-          </div>
-          <div class="proj-meta">Client work · Built solo</div>
-          <p class="proj-desc">
-            Black-and-gold Arabic digital menu opened by QR code: four sections (food, drinks, desserts, shisha),
-            sticky category tabs, animated item modals with photos, and a floating WhatsApp button.
-          </p>
-          <div class="tags">
-            <span class="tag">Next.js 14</span>
-            <span class="tag">TypeScript</span>
-            <span class="tag">Tailwind CSS</span>
-            <span class="tag">Framer Motion</span>
-          </div>
-        </div>
-        
-      </section>
-
-      <!-- MORE PROJECTS -->
-      <section class="section">
-        <div class="section-title">More Projects</div>
-
-         <div class="project-card">
-          <div class="proj-top">
-            <span class="proj-name">Gallery Republic — E-Commerce + Admin Dashboard</span>
-            <a class="proj-link" href="https://demo-gallery-republic.vercel.app/" target="_blank">↗ Live</a>
-          </div>
-          <div class="proj-meta">Client work · Built solo · Pharaonic copper &amp; silver-plated pieces</div>
-          <p class="proj-desc">
-            Online store with a private order-management dashboard. Google Sheets acts as the database
-            through a Google Apps Script API, so the owner edits everything in a tool they already know.
-          </p>
-          <ul class="proj-points">
-            <li>Cart with bundle discounts loaded live from the sheet, plus a laser-engraving option (custom text or logo)</li>
-            <li>Checkout with Egyptian phone validation, governorate picker and Google Maps location link</li>
-            <li>Dashboard: orders and status flow, inventory, discounts, promo banner, analytics, printable shipping labels</li>
-            <li>Spam protection: honeypot, per-device rate limit, retry queue and server-side write lock</li>
-          </ul>
-          <div class="tags">
-            <span class="tag">Next.js 16</span>
-            <span class="tag">TypeScript</span>
-            <span class="tag">Tailwind CSS</span>
-            <span class="tag">Framer Motion</span>
-            <span class="tag">Google Apps Script</span>
-          </div>
-        </div>
-        
-
-        <div class="project-card compact">
-          <div class="proj-top">
-            <span class="proj-name">Digital Wedding Invitation</span>
-            <a class="proj-link" href="https://rana-wedding.vercel.app/" target="_blank">↗ Live</a>
-          </div>
-          <div class="proj-meta">Client work · Built solo</div>
-          <p class="proj-desc">
-            Interactive Arabic invitation with a tap-to-open screen and music, live countdown and venue map link.
-            Guest wishes go through a server API route into Google Sheets and are read on a password-protected page.
-          </p>
-          <div class="tags">
-            <span class="tag">Next.js 14</span>
-            <span class="tag">API Routes</span>
-            <span class="tag">Google Apps Script</span>
-            <span class="tag">CSS Animations</span>
-          </div>
-        </div>
-
-         <div class="project-card">
-          <div class="proj-top">
-            <span class="proj-name">Movie Discovery App</span>
-            <a class="proj-link" href="https://movie-app-reactjs-beige.vercel.app/" target="_blank">↗ Live</a>
-          </div>
-          <p class="proj-desc">
-            Browse and search movies via TMDB API with session-based authentication,
-            dark mode toggle, and multi-language support.
-          </p>
-          <div class="tags">
-            <span class="tag">React.js</span>
-            <span class="tag">TMDB API</span>
-            <span class="tag">Bootstrap</span>
-            <span class="tag">i18n</span>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- EXPERIENCE -->
-      <section class="section">
-        <div class="section-title">Experience</div>
-
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title">WordPress Developer</span>
-            <span class="entry-date">Mar 2024 – Mar 2025</span>
-          </div>
-          <div class="entry-sub">OneHoster · Alexandria</div>
-          <ul>
-            <li>Built and customized client websites using Elementor, WooCommerce, and custom post types.</li>
-            <li>Designed responsive, cross-browser layouts and applied SEO best practices.</li>
-          </ul>
-        </div>
-
-        <div class="entry">
-          <div class="entry-header">
-            <span class="entry-title">Freelance Developer</span>
-            <span class="entry-date">Jun – Aug 2024</span>
-          </div>
-          <div class="entry-sub">Self-Employed · Alexandria</div>
-          <ul>
-            <li>Delivered a custom data management system (WordPress + MySQL) — advanced data linking,
-            optimized queries, and a tailored frontend.</li>
-          </ul>
-        </div>
-      </section>
-
-    </main>
 
     <aside class="sidebar">
 
@@ -521,6 +409,203 @@
       </section>
 
     </aside>
+
+    <!-- PAGE 1: featured projects -->
+    <main>
+
+      <section class="section">
+        <div class="section-title">Featured Projects</div>
+
+        <div class="project-card">
+          <div class="proj-top">
+            <span class="proj-name">Hazem El-Rayan — Parliamentary Services Portal</span>
+            <a class="proj-link" href="https://hazem-elrayan.com/" target="_blank">↗ hazem-elrayan.com</a>
+          </div>
+          <div class="proj-meta">Client work · Built solo, end to end · In production</div>
+          <p class="proj-desc">
+            Civic portal for an Egyptian Parliament member. Citizens submit service requests, file
+            complaints and track case status in real time.
+          </p>
+          <ul class="proj-points">
+            <li>Full admin dashboard for case management and a public news feed</li>
+            <li>Arabic-first RTL interface; Django REST API with PostgreSQL behind a Next.js front end</li>
+          </ul>
+          <div class="tags">
+            <span class="tag">Next.js</span>
+            <span class="tag">Django</span>
+            <span class="tag">PostgreSQL</span>
+            <span class="tag">REST API</span>
+            <span class="tag">RTL / Arabic</span>
+            <span class="tag">Admin Dashboard</span>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="proj-top">
+            <span class="proj-name">ERP System — Arabic Business Management (PWA)</span>
+            <a class="proj-link" href="https://demo-erp-lilac.vercel.app/" target="_blank">↗ Live</a>
+          </div>
+          <div class="proj-meta">Client work · Built solo · Installable, works offline</div>
+          <p class="proj-desc">
+            Replaces paper notebooks and spreadsheets for small trading businesses: suppliers, customers,
+            products, purchases, sales, stock and invoices in one RTL Arabic app.
+          </p>
+          <ul class="proj-points">
+            <li>Live dashboard: purchases, sales, actual profit (average cost) and low-stock alerts</li>
+            <li>Printable sales and purchase invoices; supplier, customer and product account statements</li>
+            <li>Offline-safe writes: local sync queue with unique request IDs, so nothing is lost or duplicated</li>
+          </ul>
+          <div class="tags">
+            <span class="tag">Next.js 14</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">PWA</span>
+            <span class="tag">Tailwind CSS</span>
+            <span class="tag">Google Apps Script</span>
+          </div>
+        </div>
+
+        <div class="project-card compact">
+          <div class="proj-top">
+            <span class="proj-name">Tasbeeh app</span>
+            <a class="proj-link" href="https://tasbeeh-app-coral.vercel.app/" target="_blank">↗ Live</a>
+          </div>
+          <div class="proj-meta">Client work · Built solo</div>
+          <p class="proj-desc">Client work · Built solo
+
+Interactive digital Tasbeeh application featuring customizable counter goals, audio/haptic feedback, and persistent progress tracking. Built as an installable Progressive Web App (PWA) with offline support and custom Athkar management.
+          </p>
+          <div class="tags">
+            <span class="tag">React</span>
+            <span class="tag">Vite</span>
+            <span class="tag">Tailwind CSS</span>
+            <span class="tag">PWA</span>
+            <span class="tag">LocalStorage</span>
+          </div>
+        </div>
+
+       
+
+      </section>
+    </main>
+
+    <!-- PAGE 2 (print): full width, starts on a new page -->
+    <div class="page-2">
+
+      <section class="section">
+        <div class="section-title">More Projects</div>
+
+         <div class="project-card compact">
+          <div class="proj-top">
+            <span class="proj-name">Alexander Restaurant Menu</span>
+            <a class="proj-link" href="https://alexander-menu-silk.vercel.app/" target="_blank">↗ Live</a>
+          </div>
+          <div class="proj-meta">Client work · Built solo</div>
+          <p class="proj-desc">
+            Black-and-gold Arabic digital menu opened by QR code: four sections (food, drinks, desserts, shisha),
+            sticky category tabs, animated item modals with photos, and a floating WhatsApp button.
+          </p>
+          <div class="tags">
+            <span class="tag">Next.js 14</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Tailwind CSS</span>
+            <span class="tag">Framer Motion</span>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="proj-top">
+            <span class="proj-name">Gallery Republic — E-Commerce + Admin Dashboard</span>
+            <a class="proj-link" href="https://demo-gallery-republic.vercel.app/" target="_blank">↗ Live</a>
+          </div>
+          <div class="proj-meta">Client work · Built solo · Pharaonic copper &amp; silver-plated pieces</div>
+          <p class="proj-desc">
+            Online store with a private order-management dashboard. Google Sheets acts as the database
+            through a Google Apps Script API, so the owner edits everything in a tool they already know.
+          </p>
+          <ul class="proj-points">
+            <li>Cart with bundle discounts loaded live from the sheet, plus a laser-engraving option (custom text or logo)</li>
+            <li>Checkout with Egyptian phone validation, governorate picker and Google Maps location link</li>
+            <li>Dashboard: orders and status flow, inventory, discounts, promo banner, analytics, printable shipping labels</li>
+            <li>Spam protection: honeypot, per-device rate limit, retry queue and server-side write lock</li>
+          </ul>
+          <div class="tags">
+            <span class="tag">Next.js 16</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Tailwind CSS</span>
+            <span class="tag">Framer Motion</span>
+            <span class="tag">Google Apps Script</span>
+          </div>
+        </div>
+
+        <div class="project-card compact">
+          <div class="proj-top">
+            <span class="proj-name">Digital Wedding Invitation</span>
+            <a class="proj-link" href="https://rana-wedding.vercel.app/" target="_blank">↗ Live</a>
+          </div>
+          <div class="proj-meta">Client work · Built solo</div>
+          <p class="proj-desc">
+            Interactive Arabic invitation with a tap-to-open screen and music, live countdown and venue map link.
+            Guest wishes go through a server API route into Google Sheets and are read on a password-protected page.
+          </p>
+          <div class="tags">
+            <span class="tag">Next.js 14</span>
+            <span class="tag">API Routes</span>
+            <span class="tag">Google Apps Script</span>
+            <span class="tag">CSS Animations</span>
+          </div>
+        </div>
+
+        
+
+        <div class="project-card">
+          <div class="proj-top">
+            <span class="proj-name">Movie Discovery App</span>
+            <a class="proj-link" href="https://movie-app-reactjs-beige.vercel.app/" target="_blank">↗ Live</a>
+          </div>
+          <p class="proj-desc">
+            Browse and search movies via TMDB API with session-based authentication,
+            dark mode toggle, and multi-language support.
+          </p>
+          <div class="tags">
+            <span class="tag">React.js</span>
+            <span class="tag">TMDB API</span>
+            <span class="tag">Bootstrap</span>
+            <span class="tag">i18n</span>
+          </div>
+        </div>
+
+      </section>
+
+      <section class="section">
+        <div class="section-title">Experience</div>
+
+        <div class="entry">
+          <div class="entry-header">
+            <span class="entry-title">WordPress Developer</span>
+            <span class="entry-date">Mar 2024 – Mar 2025</span>
+          </div>
+          <div class="entry-sub">OneHoster · Alexandria</div>
+          <ul>
+            <li>Built and customized client websites using Elementor, WooCommerce, and custom post types.</li>
+            <li>Designed responsive, cross-browser layouts and applied SEO best practices.</li>
+          </ul>
+        </div>
+
+        <div class="entry">
+          <div class="entry-header">
+            <span class="entry-title">Freelance Developer</span>
+            <span class="entry-date">Jun – Aug 2024</span>
+          </div>
+          <div class="entry-sub">Self-Employed · Alexandria</div>
+          <ul>
+            <li>Delivered a custom data management system (WordPress + MySQL) — advanced data linking,
+            optimized queries, and a tailored frontend.</li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+
   </div>
 
 </div>
